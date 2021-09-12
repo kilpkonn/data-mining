@@ -1,22 +1,3 @@
-library(shotGroups)
-
-rm(list = ls())
-
-source("distance-functions.R")
-
-# Load the data, note that variable "data_matrix" will appear!!
-load(file="./data/gaussians.RData")
-
-sample_size <- floor(0.7 * nrow(data_matrix))
-
-# Set seed to make results reproducible
-# set.seed(123)
-
-train_ind <- sample(seq_len(nrow(data_matrix)), size = sample_size)
-
-train_set <- data_matrix[train_ind, ]
-test_set <- data_matrix[-train_ind, ]
-
 kmeans <- function (data, k, s, n) {
   dimensions <- ncol(data)
   centroids <- matrix(nrow=k, ncol=dimensions)
@@ -58,18 +39,4 @@ kmeans <- function (data, k, s, n) {
     }
   }
   return(labels)
-}
-
-dist_fn <- function(a, b) {
-  res <- minkowsky_dist(a, b, 2)
-  return(res)
-}
-
-lbls = kmeans(train_set, 3, dist_fn, 20)
-
-for (i in seq(1:sample_size )) {
-  color <- switch(lbls[[i]],"red","green","blue")
-  a <- matrix(train_set[i,], nrow = 1, ncol = ncol(train_set))
-  plot(a, col=color, type="p", xlim=c(-10,20), ylim=c(-10,20))
-  par(new=TRUE)
 }
