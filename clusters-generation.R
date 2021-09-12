@@ -6,7 +6,7 @@ rm(list = ls())
 # Labels
 labels_count <- 3
 labels_names <- 1:labels_count
-labels_points <- 500 # 1:1:500?
+labels_points <- 500
 
 # Distribution
 
@@ -31,7 +31,7 @@ means <- list(c(3.5, 2),
               c(9, 1))
 
 # Generate Gaussian
-result_matrix <- matrix(nrow=labels_count * labels_points, ncol=labels_count)
+data_matrix <- matrix(nrow=labels_count * labels_points, ncol=labels_count)
 for (i in seq(labels_count)) {
   eig_vec <- eig_vecs[[i]]  # In matrix form, cols are vectors
   eig_val <- eig_vals[[i]]  # Diagonal matrix of lambdas
@@ -43,13 +43,13 @@ for (i in seq(labels_count)) {
   par(new=TRUE)  # To include the previous plot on the previous = combine plots
   
   # Insert the generated data inside the x matrix and add label
-  for (j in seq(along=labels_points)){
-    result_matrix[(i - 1) * labels_points + j, 1:2] <- xx[i,]
-    result_matrix[(i - 1) * labels_points + j, 3] <- i  # Label
+  for (j in seq(along=1:labels_points)){
+    data_matrix[(i - 1) * labels_points + j, 1:2] = xx[j,]
+    data_matrix[(i - 1) * labels_points + j, 3] = i  # Label
   }
 }
 
 # Drop the label (Comment out to keep)
-result_matrix <- result_matrix[,1:2]
+data_matrix <- data_matrix[,1:2]
 
-save(result_matrix, file="./data/gaussians.RData")
+save(data_matrix, file="./data/gaussians.RData")
