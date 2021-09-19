@@ -7,7 +7,7 @@ source("distance-functions.R")
 source("kmeans.R")
 
 # Load the data, note that variable "data_matrix" will appear!!
-load(file="./data/gaussians.RData")
+load(file="./data/gaussian2.RData")
 
 sample_size <- floor(0.7 * nrow(data_matrix))
 
@@ -52,7 +52,10 @@ gmm <- function(D, k) {
   
   points <- matrix(0, nrow = nrow(D), ncol = k)
   
-  for (q in 1:20) {
+  loglik <- rep(NaN, 200)
+  loglik[1] <- -Inf
+  
+  for (q in 2:200) {
     points <- matrix(0, nrow = nrow(D), ncol = k)
     for (i in 1:nrow(D)) {
       for (j in 1:k) {
@@ -71,13 +74,13 @@ gmm <- function(D, k) {
     for (t in 1:k) {
       normalizer <- normalizer + ps[[t]] * points[,t]
     }
-    # normalizer <- pmax(pmin(normalizer, 0.99999), 0.00001)
+    # Update for next step
+    tmp_loglik <- 0
     for (j in 1:k) {
       # Find posterior for k
       ppk <- points[,j]
       pk <- ps[[j]]
       p <- pk * ppk / normalizer
-      p <- p # pmax(pmin(p, 1 - 10**6), 10**-6)
       
       # Find new center
       v <- c(rep(0, d))
@@ -85,9 +88,17 @@ gmm <- function(D, k) {
         v <- v + p[[t]] * D[t,]
       }
       v <- v / sum(p)
-      wt <- p / sum(p) * nrow(D)
-      sigmas[[j]] <- cov.wt(D, wt)[["cov"]]
+      wt <- p / sum(p)
+      sigmas[[j]] <- cov.wt(D, wt, center = TRUE)[["cov"]]
       means[[j]] <- v
+      
+      # Calculate loglik for convergion
+      tmp_loglik <- tmp_loglik + sum(pk * log(pk * p))  # pk * (log(pk) + log(p)) ?
+    }
+    loglik[q] <- tmp_loglik
+    print(tmp_loglik)
+    if (all(is.finite(loglik[q]), is.finite(loglik[q-1])) && abs(loglik[q] - loglik[q - 1]) < 0.00001) {
+      break
     }
   }
   
@@ -104,18 +115,13 @@ gmm <- function(D, k) {
     soft_lbls[,j] <- p
   }
   lbls <- apply(soft_lbls, 1, which.max)
+  return(lbls)
 }
 
-lbls <- gmm(train_set, 3)
-
-n <- 1
-for (t in unique(lbls)) {
-  lbls[lbls == t] <- n
-  n <- n + 1
-}
+lbls <- gmm(train_set, 6)
 
 for (i in 1:nrow(train_set)) {
-  color <- switch(lbls[[i]],"red","green","blue","orange","magenta")
+  color <- switch(lbls[[i]],"red","green","blue","orange","magenta","cyan","purple","pink")
   a <- matrix(train_set[i,], nrow = 1, ncol = ncol(train_set))
   plot(a, col=color, type="p", xlim=c(-10,20), ylim=c(-10,20))
   par(new=TRUE)

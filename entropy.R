@@ -17,7 +17,7 @@ entropy_acc <- function(grid, v, buckets, features, n) {
 }
 
 # selected - vector of data columns to select
-features_entropy_ <- function(data, selected, buckets) {
+selected_features_entropy <- function(data, selected, buckets) {
   mins <- apply(data, 2, min)
   maxs <- apply(data, 2, max) + c(0.00000001, length(selected))
   
