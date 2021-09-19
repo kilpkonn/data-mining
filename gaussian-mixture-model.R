@@ -7,7 +7,7 @@ source("distance-functions.R")
 source("kmeans.R")
 
 # Load the data, note that variable "data_matrix" will appear!!
-load(file="./data/gaussian2.RData")
+load(file="./data/gaussians2.RData")
 
 sample_size <- floor(0.7 * nrow(data_matrix))
 
@@ -61,8 +61,9 @@ gmm <- function(D, k) {
       for (j in 1:k) {
         row <- D[i,]
         S <- sigmas[[j]]
+        inv_S <- gaussianElimination(S)
         mean <- means[[j]]
-        likelyhood <- 1 / sqrt((2 * pi)**d * det(S)) * exp(-0.5 * t(row - mean) %*% inv(S) %*% (row - mean))
+        likelyhood <- 1 / sqrt((2 * pi)**d * det(S)) * exp(-0.5 * t(row - mean) %*% inv_S %*% (row - mean))
         points[i, j] <- likelyhood
       }
     }
