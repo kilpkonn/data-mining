@@ -1,4 +1,7 @@
-kmeans <- function (data, k, s, n) {
+# k - amount of clusters
+# s - distance fn
+# epsilon - max centroids change for stopping
+kmeans <- function (data, k, s, epsilon) {
   dimensions <- ncol(data)
   centroids <- matrix(nrow=k, ncol=dimensions)
   labels <- matrix(0, nrow = nrow(data), ncol = 1)
@@ -13,16 +16,19 @@ kmeans <- function (data, k, s, n) {
     }
   }
   
-  # Run n times
-  for (i in seq(0:n)) {
+  deltas = c(rep(0, 100))
+  deltas[1] <- Inf
+  
+  # Run max 100 times
+  for (i in 2:100) {
     
     # Assign labels to points
     label_counts <- matrix(0, nrow = k, ncol = 1)
-    for (r in seq(1:nrow(data))) {
+    for (r in 1:nrow(data)) {
       p <- data[r,]
       
       distances <- matrix(nrow = 1, ncol = k)
-      for (j in seq(1:k)) {
+      for (j in 1:k) {
         c <- centroids[j,]
         distances[[1, j]] <- s(p, c)
       }
@@ -32,11 +38,23 @@ kmeans <- function (data, k, s, n) {
     }
     
     # Calculate new centroids
-    centroids <- matrix(0, nrow=k, ncol=dimensions)
+    new_centroids <- matrix(0, nrow=k, ncol=dimensions)
     for (r in 1:nrow(data)) {
-        label <- labels[[r]]
-        centroids[label,] <- centroids[label,] + data[r,] / label_counts[[label]]
+      label <- labels[[r]]
+      new_centroids[label,] <- new_centroids[label,] + data[r,] / label_counts[[label]]
+    }
+    
+    # Calculate center movements
+    for (j in 1:nrow(centroids)) {
+      a <- centroids[j,]
+      b <- new_centroids[j,]
+      deltas[i] <- deltas[i] + s(a, b)
+    }
+    centroids <- new_centroids
+    if (abs(deltas[i] - deltas[i - 1]) < epsilon) {
+      break
     }
   }
   return(labels)
 }
+
