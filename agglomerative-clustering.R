@@ -15,7 +15,6 @@ agglomerative_clustering <- function(data, s, l) {
   }
   
   for (i in 1:(ncol(labels) - 1)) {
-    # TODO: Verify if all are checked
     linkage_matrix <- matrix(nrow = nrow(data), ncol = nrow(data))
     for (cluster1_idx in 1:ncol(similarity_matrix)) {
       for (cluster2_idx in 1:ncol(similarity_matrix)) {
