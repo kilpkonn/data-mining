@@ -51,7 +51,7 @@ decision_tree_main <- function() {
                           1,2,0,1,0), nrow = 5, ncol = 14))
   lbls <- tennis_data[,5]
   D <- tennis_data[,1:4]
-  res <- build_decision_tree(D, lbls, gini)
+  res <- build_decision_tree(D, lbls, entropy)
   
   print(res)
 }
