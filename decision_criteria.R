@@ -16,7 +16,7 @@ gini <- function(D, lbls) {
       group_tbl <- table(group_lbls)
       lbls_dist <- as.matrix(group_tbl)[,1] / length(group_idxes)
       
-      curr_gini <- sum(lbls_dist * lbls_dist)
+      curr_gini <- 1 - sum(lbls_dist * lbls_dist)
       w <- length(group_idxes) / nrow(D)
       
       overall_gini <- overall_gini + w * curr_gini
