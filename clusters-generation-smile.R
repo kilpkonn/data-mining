@@ -47,7 +47,7 @@ means <- list(c(8, 12),
               c(11, 8))
 
 # Generate Gaussian
-data_matrix <- matrix(nrow=sum(labels_points), ncol=labels_count)
+data_matrix <- matrix(nrow=sum(labels_points), ncol=3)
 for (i in seq(labels_count)) {
   eig_vec <- eig_vecs[[i]]  # In matrix form, cols are vectors
   eig_val <- eig_vals[[i]]  # Diagonal matrix of lambdas
@@ -60,8 +60,8 @@ for (i in seq(labels_count)) {
   
   # Insert the generated data inside the x matrix and add label
   for (j in 1:labels_points[i]){
-    data_matrix[sum(labels_points[1:(i-1)]) + j, 1:2] = xx[j,]
-    data_matrix[sum(labels_points[1:(i-1)]) + j, 3] = i  # Label
+    data_matrix[sum(labels_points[1:i]) - labels_points[i] + j, 1:2] = xx[j,]
+    data_matrix[sum(labels_points[1:i]) - labels_points[i] + j, 3] = i  # Label
   }
 }
 

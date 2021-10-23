@@ -34,6 +34,7 @@ fisher_scores <- function(D, lbls) {
 }
 
 fisher_score_main <- function() {
+  library(PredPsych)
   source("decision_criteria.R")
   
   tennis_data <- t(matrix(c(2,1,0,0,0,
@@ -55,6 +56,9 @@ fisher_score_main <- function() {
   res <- fisher_scores(D, lbls)
   
   print(res)
+  
+  base <- fscore(tennis_data, classCol = 5, featureCol = 1:4)
+  print(base)
 }
 
 fisher_score_main()

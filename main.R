@@ -36,7 +36,7 @@ for (i in 1:nrow(test_set)) {
 for (i in 1:nrow(test_set)) {
   if (is.na(lbls[[i, 1]])) {
     a <- matrix(train_set[i,], nrow = 1, ncol = ncol(train_set))
-    plot(a, col="black", type="p", xlim=c(-10,20), ylim=c(-10,20))
+    plot(x=, col="black", type="p", xlim=c(-10,20), ylim=c(-10,20))
     par(new=TRUE)
   }
 }
